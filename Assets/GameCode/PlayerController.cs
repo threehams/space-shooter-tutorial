@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [System.Serializable]
 public class Boundary
@@ -10,47 +8,33 @@ public class Boundary
 
 public class PlayerController : MonoBehaviour
 {
-    public float speed;
-    public float tilt;
-    public float fireRate;
-    public Boundary boundary;
-    public GameObject shot;
-    public Transform hardpoint1;
-    public Transform hardpoint2;
-    public Transform hardpoint3;
+    [SerializeField] private float speed;
+    [SerializeField] private float tilt;
+    [SerializeField] private Boundary boundary;
+    [SerializeField] private GameObject startingWeapon;
+    [SerializeField] private Transform hardpoint1;
+    private WeaponController weapon;
 
-    private AudioSource audioSource;
     private Rigidbody rigidBody;
-    private float nextFire = 0.5f;
-    private float myTime = 0.0f;
 
     private void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
-        audioSource = GetComponent<AudioSource>();
+        ReplaceWeapon(startingWeapon, hardpoint1);
     }
 
     private void Update()
     {
-        myTime = myTime + Time.deltaTime;
-
-        if (Input.GetButton("Fire1") && myTime > nextFire)
+        if (Input.GetButton("Fire1"))
         {
-            nextFire = myTime + fireRate;
-            Instantiate(shot, hardpoint1.position, hardpoint1.rotation);
-            Instantiate(shot, hardpoint2.position, hardpoint2.rotation);
-            Instantiate(shot, hardpoint3.position, hardpoint3.rotation);
-            audioSource.Play();
-
-            nextFire = nextFire - myTime;
-            myTime = 0.0f;
+            weapon.Fire();
         }
     }
 
     private void FixedUpdate()
     {
-        float moveHorizontal = Input.GetAxis("Horizontal");
-        float moveVertical = Input.GetAxis("Vertical");
+        var moveHorizontal = Input.GetAxis("Horizontal");
+        var moveVertical = Input.GetAxis("Vertical");
 
         rigidBody.velocity = new Vector3(moveHorizontal, 0.0f, moveVertical) * speed;
 
@@ -61,5 +45,17 @@ public class PlayerController : MonoBehaviour
         );
 
         rigidBody.rotation = Quaternion.Euler(0.0f, 0.0f, rigidBody.velocity.x * -tilt);
+    }
+
+    private void ReplaceWeapon(GameObject weaponClass, Transform hardpoint)
+    {
+        var newWeapon = Instantiate(weaponClass, hardpoint.position, hardpoint.rotation);
+        newWeapon.transform.parent = gameObject.transform;
+        weapon = newWeapon.GetComponent<WeaponController>();
+    }
+
+    public void CollectPowerup(Powerup powerup)
+    {
+        ReplaceWeapon(powerup.item, hardpoint1);
     }
 }

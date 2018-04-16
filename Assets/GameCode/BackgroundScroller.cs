@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class BackgroundScroller : MonoBehaviour {
     [SerializeField]
@@ -10,13 +8,13 @@ public class BackgroundScroller : MonoBehaviour {
     private Vector3 startPosition;
 
     // Use this for initialization
-    void Start () {
+    private void Start () {
         startPosition = transform.position;
 	}
 	
 	// Update is called once per frame
-	void Update () {
-        float newPosition = Mathf.Repeat(Time.time * scrollSpeed, tileLength);
+	private void Update () {
+        var newPosition = Mathf.Repeat(Time.time * scrollSpeed, tileLength);
         transform.position = startPosition + Vector3.forward * newPosition;
 	}
 }
