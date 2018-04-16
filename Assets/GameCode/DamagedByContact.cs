@@ -7,20 +7,28 @@ public class DamagedByContact : MonoBehaviour
     private Destroyable healthScript;
     public int damage;
     private PlayerController playerController;
+    private Powerup powerup;
 
     private void Start()
     {
         healthScript = GetComponent<Destroyable>();
         playerController = GetComponent<PlayerController>();
+        powerup = GetComponent<Powerup>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        var powerup = other.GetComponent<Powerup>();
-
-        if (playerController != null && powerup != null)
+        var otherPlayer = other.GetComponent<PlayerController>();
+        if (powerup != null)
         {
-            playerController.CollectPowerup(powerup);
+            if (otherPlayer)
+            {
+                otherPlayer.CollectPowerup(powerup);
+            }
+            else
+            {
+                return;
+            }
         }
 
         if ((CompareTag("Player") && other.CompareTag("Player")) ||
