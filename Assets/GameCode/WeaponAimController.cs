@@ -55,9 +55,8 @@ public class WeaponAimController : MonoBehaviour
     private void RotateAim()
     {
         var delta = target.position - transform.position;
-        var relativeVelocity = target.velocity - new Vector3(0.0f, 0.0f, 0.0f);
         // TODO hardcoded... how can I get the weapon shot velocity?
-        var targetPosition = AimAhead(delta, relativeVelocity, 20.0f);
+        var targetPosition = AimAhead(delta, target.velocity, 20.0f);
 
         if (!(targetPosition > 0f))
         {
@@ -65,16 +64,18 @@ public class WeaponAimController : MonoBehaviour
             return;
         }
 
-        var aimPoint = target.position + targetPosition * relativeVelocity;
+        var current = transform.rotation.eulerAngles;
+        var aimPoint = target.position + targetPosition * target.velocity;
         var aimRotation = Quaternion.LookRotation(aimPoint - transform.position).eulerAngles;
-        var deltaRotation = aimRotation - transform.rotation.eulerAngles;
+        var deltaRotation = aimRotation - current;
         
         var clamped = new Vector3(
-            Mathf.Min(deltaRotation.x, aimSpeed),
-            Mathf.Min(deltaRotation.y, aimSpeed),
-            Mathf.Min(deltaRotation.z, aimSpeed)
+            0.0f,
+            DeltaToTarget(current.y, deltaRotation.y),
+            0.0f
         );
-        transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles + clamped);
+        Debug.Log(clamped.y);
+        transform.rotation = Quaternion.Euler(current + clamped);
     }
 
     // scriptable objects... like JSON but not JSON
@@ -98,5 +99,12 @@ public class WeaponAimController : MonoBehaviour
         {
             return -1f;
         }
+    }
+
+    private float DeltaToTarget(float current, float delta)
+    {
+        var maxSpeed = aimSpeed * Time.deltaTime;
+        Debug.Log(maxSpeed);
+        return Mathf.Clamp(Mathf.DeltaAngle(current, current + delta), -maxSpeed, maxSpeed);
     }
 }
