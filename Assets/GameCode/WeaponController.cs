@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 
 
 public class WeaponController : MonoBehaviour
@@ -6,36 +7,31 @@ public class WeaponController : MonoBehaviour
     public GameObject nextWeapon;
     
     [SerializeField] private float fireRate;
-    [SerializeField] private GameObject[] weaponParts;
-    [SerializeField] private AudioSource audioSource;
+    private AudioSource audioSource;
 
     // for caching
     private Weapon[] weaponPartScripts;
     private float nextFire = 0.0f;
-    private float myTime = 0.0f;
+    private float timer = 0.0f;
 
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        weaponPartScripts = new Weapon[weaponParts.Length];
-        for (var i = 0; i < weaponParts.Length; i++)
-        {
-            weaponPartScripts[i] = weaponParts[i].GetComponent<Weapon>();
-        }
+        weaponPartScripts = GetComponentsInChildren<Weapon>();
     }
 
     public void Update()
     {
-        myTime = myTime + Time.deltaTime;
+        timer = timer + Time.deltaTime;
     }
     
     public void Fire()
     {
-        if (!(myTime > nextFire))
+        if (!(timer > nextFire))
         {
             return;
         }
-        nextFire = myTime + fireRate;
+        nextFire = timer + fireRate;
 
         foreach (var part in weaponPartScripts)
         {
@@ -44,8 +40,7 @@ public class WeaponController : MonoBehaviour
 
         audioSource.Play();
 
-        nextFire = nextFire - myTime;
-        myTime = 0.0f;
-
+        nextFire = nextFire - timer;
+        timer = 0.0f;
     }
 }

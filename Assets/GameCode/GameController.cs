@@ -40,7 +40,7 @@ public class GameController : MonoBehaviour
                 var hazard = hazards[Random.Range(0, hazards.Length)];
                 var spawnPosition = new Vector3(Random.Range(-spawnValues.x, spawnValues.x), spawnValues.y,
                     spawnValues.z);
-                var spawnRotation = Quaternion.identity;
+                var spawnRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
                 Instantiate(hazard, spawnPosition, spawnRotation);
                 yield return new WaitForSeconds(spawnWait);
             }

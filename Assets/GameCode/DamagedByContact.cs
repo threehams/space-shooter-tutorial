@@ -1,17 +1,18 @@
 ﻿using UnityEngine;
+using GameCode;
 
-[RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(Destroyable))]
+// OnValidate?
+
 public class DamagedByContact : MonoBehaviour
 {
-    private Destroyable healthScript;
+    private Destroyable destroyable;
     public int damage;
     private PlayerController playerController;
     private Powerup powerup;
 
     private void Start()
     {
-        healthScript = GetComponent<Destroyable>();
+        destroyable = GetComponent<Destroyable>();
         playerController = GetComponent<PlayerController>();
         powerup = GetComponent<Powerup>();
     }
@@ -43,6 +44,6 @@ public class DamagedByContact : MonoBehaviour
             return;
         }
 
-        healthScript.RemoveHealth(damageScript.damage);
+        destroyable.RemoveHealth(damageScript.damage);
     }
 }
