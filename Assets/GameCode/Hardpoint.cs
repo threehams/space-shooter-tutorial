@@ -12,24 +12,15 @@ namespace GameCode
             Right
         };
 
-        [SerializeField] private HardpointType type;
-        [SerializeField] private WeaponSetController startingWeapon;
+        public HardpointType type;
         
-        private WeaponSetController weapon;
+        private Weapon weapon;
 
-        private void Start()
-        {
-            if (startingWeapon)
-            {
-                ReplaceWeapon(startingWeapon);            
-            }
-        }
-        
-        private void ReplaceWeapon(WeaponSetController weaponClass)
+        public void ReplaceWeapon(Weapon weaponClass)
         {
             var newWeapon = Instantiate(weaponClass.gameObject, transform.position, transform.rotation);
             newWeapon.transform.parent = gameObject.transform;
-            weapon = newWeapon.GetComponent<WeaponSetController>();
+            weapon = newWeapon.GetComponent<Weapon>();
         }
 
         public void Fire()
@@ -38,11 +29,6 @@ namespace GameCode
             {
                 weapon.Fire();
             }
-        }
-
-        public void Upgrade()
-        {
-            weapon.Upgrade();
         }
     }
 }
