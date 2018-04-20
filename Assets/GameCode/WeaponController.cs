@@ -1,11 +1,10 @@
-﻿using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
+using GameCode;
 
 
 public class WeaponController : MonoBehaviour
 {
-    public GameObject nextWeapon;
-    
+    public Hardpoint.HardpointType hardpoint;
     [SerializeField] private float fireRate;
     private AudioSource audioSource;
 
@@ -24,13 +23,14 @@ public class WeaponController : MonoBehaviour
     {
         timer = timer + Time.deltaTime;
     }
-    
+
     public void Fire()
     {
         if (!(timer > nextFire))
         {
             return;
         }
+
         nextFire = timer + fireRate;
 
         foreach (var part in weaponPartScripts)

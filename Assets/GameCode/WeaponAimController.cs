@@ -74,7 +74,6 @@ public class WeaponAimController : MonoBehaviour
             DeltaToTarget(current.y, deltaRotation.y),
             0.0f
         );
-        Debug.Log(clamped.y);
         transform.rotation = Quaternion.Euler(current + clamped);
     }
 
@@ -104,7 +103,6 @@ public class WeaponAimController : MonoBehaviour
     private float DeltaToTarget(float current, float delta)
     {
         var maxSpeed = aimSpeed * Time.deltaTime;
-        Debug.Log(maxSpeed);
         return Mathf.Clamp(Mathf.DeltaAngle(current, current + delta), -maxSpeed, maxSpeed);
     }
 }

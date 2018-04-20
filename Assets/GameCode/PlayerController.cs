@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using GameCode;
+using UnityEngine;
 
 [System.Serializable]
 public class Boundary
@@ -11,37 +12,24 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float speed;
     [SerializeField] private float tilt;
     [SerializeField] private Boundary boundary;
-    [SerializeField] private GameObject startingWeapon;
-    [SerializeField] private GameObject startingSidekickLeft;
-    [SerializeField] private GameObject startingSidekickRight;
-    [SerializeField] private Transform frontHardpoint;
-    [SerializeField] private Transform sidekickLeftHardpoint;
-    [SerializeField] private Transform sidekickRightHardpoint;
-    private WeaponController frontWeapon;
-    private WeaponController sidekickLeft;
-    private WeaponController sidekickRight;
 
     private Rigidbody rigidBody;
+    private Hardpoint[] hardpoints;
 
     private void Start()
     {
         rigidBody = GetComponent<Rigidbody>();
-        frontWeapon = ReplaceWeapon(startingWeapon, frontHardpoint);
-        if (startingSidekickLeft)
-        {
-            sidekickLeft = ReplaceWeapon(startingSidekickLeft, sidekickLeftHardpoint);
-        }
-        if (startingSidekickRight)
-        {
-            sidekickRight = ReplaceWeapon(startingSidekickRight, sidekickRightHardpoint);
-        }
+        hardpoints = GetComponentsInChildren<Hardpoint>();
     }
 
     private void Update()
     {
         if (Input.GetButton("Fire1"))
         {
-            frontWeapon.Fire();
+            foreach (var hardpoint in hardpoints)
+            {
+                hardpoint.Fire();
+            }
         }
     }
 
@@ -62,18 +50,8 @@ public class PlayerController : MonoBehaviour
         rigidBody.rotation = Quaternion.Euler(0.0f, 0.0f, rigidBody.velocity.x * -tilt);
     }
 
-    private WeaponController ReplaceWeapon(GameObject weaponClass, Transform hardpoint)
-    {
-        var newWeapon = Instantiate(weaponClass, hardpoint.position, hardpoint.rotation);
-        newWeapon.transform.parent = gameObject.transform;
-        return newWeapon.GetComponent<WeaponController>();
-    }
-
     public void CollectPowerup(Powerup powerup)
     {
-        if (frontWeapon.nextWeapon)
-        {
-            frontWeapon = ReplaceWeapon(frontWeapon.nextWeapon, frontHardpoint);
-        }
+        hardpoints[0].Upgrade();
     }
 }
