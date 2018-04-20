@@ -1,19 +1,13 @@
 ﻿using System.Linq;
 using UnityEngine;
 
-public class WeaponAimController : MonoBehaviour
+public class WeaponAimer : MonoBehaviour
 {
     [SerializeField] private float aimTimeout;
     [SerializeField] private float aimRadius;
     [SerializeField] private float aimSpeed;
-    private float timer = 0.0f;
+    private float timer;
     private Rigidbody target;
-    private AIWeaponController aiWeaponController;
-
-    private void Start()
-    {
-        aiWeaponController = GetComponent<AIWeaponController>();
-    }
 
     private void Update()
     {
@@ -30,7 +24,6 @@ public class WeaponAimController : MonoBehaviour
         }
 
         target = FindNearestEnemy();
-        aiWeaponController.allowFire = target;
         timer = 0.0f;
     }
 

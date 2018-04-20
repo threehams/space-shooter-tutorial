@@ -5,14 +5,14 @@ namespace GameCode
 {
     public class WeaponSetController : MonoBehaviour
     {
-        private WeaponController[] weaponControllers;
-        private WeaponController weapon;
+        private Weapon[] weapons;
+        private Weapon weapon;
         private int level = 0;
 
         private void Start()
         {
-            weaponControllers = GetComponentsInChildren<WeaponController>();
-            weapon = weaponControllers[level];
+            weapons = GetComponentsInChildren<Weapon>();
+            weapon = weapons[level];
         }
 
         public void Fire()
@@ -22,8 +22,8 @@ namespace GameCode
 
         public void Upgrade()
         {
-            level = Math.Min(weaponControllers.Length - 1, level + 1);
-            weapon = weaponControllers[level];
+            level = Math.Min(weapons.Length - 1, level + 1);
+            weapon = weapons[level];
         }
     }
 }
