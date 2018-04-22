@@ -6,11 +6,14 @@ public class WeaponAimer : MonoBehaviour
     [SerializeField] private float aimTimeout;
     [SerializeField] private float aimRadius;
     [SerializeField] private float aimSpeed;
+    // TODO hardcoded... how can I get the weapon shot velocity?
+    [SerializeField] private float shotSpeed;
     private float timer;
     private Rigidbody target;
 
     private void Update()
     {
+        Debug.Log("updating");
         timer = timer + Time.deltaTime;
         if (target)
         {
@@ -24,7 +27,7 @@ public class WeaponAimer : MonoBehaviour
         }
 
         target = FindNearestEnemy();
-        timer = 0.0f;
+        timer = aimTimeout;
     }
 
     private Rigidbody FindNearestEnemy()
@@ -34,8 +37,7 @@ public class WeaponAimer : MonoBehaviour
             transform.position.y,
             transform.position.z
         );
-        var dimensions = new Vector3(aimRadius, aimRadius, aimRadius);
-        var colliders = Physics.OverlapBox(center, dimensions);
+        var colliders = Physics.OverlapSphere(center, aimRadius);
 
         return (
             from col in colliders
@@ -48,8 +50,7 @@ public class WeaponAimer : MonoBehaviour
     private void RotateAim()
     {
         var delta = target.position - transform.position;
-        // TODO hardcoded... how can I get the weapon shot velocity?
-        var targetPosition = AimAhead(delta, target.velocity, 20.0f);
+        var targetPosition = AimAhead(delta, target.velocity, shotSpeed);
 
         if (!(targetPosition > 0f))
         {
