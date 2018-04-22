@@ -7,7 +7,7 @@ namespace GameCode
     {
         private Weapon[] weapons;
         private Weapon weapon;
-        private int level = 0;
+        private int level;
 
         private void Start()
         {

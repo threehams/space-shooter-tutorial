@@ -1,46 +1,47 @@
 ﻿using UnityEngine;
-using GameCode;
 
-
-public class Weapon : MonoBehaviour
+namespace GameCode
 {
-    public Hardpoint.HardpointType hardpoint;
-    [SerializeField] private float fireRate;
-    private AudioSource audioSource;
-
-    // for caching
-    private WeaponPart[] weaponPartPartScripts;
-    private float nextFire = 0.0f;
-    private float timer = 0.0f;
-
-    private void Start()
+    public class Weapon : MonoBehaviour
     {
-        audioSource = GetComponent<AudioSource>();
-        weaponPartPartScripts = GetComponentsInChildren<WeaponPart>();
-    }
+        public Hardpoint.HardpointType hardpoint;
+        [SerializeField] private float fireRate;
+        private AudioSource audioSource;
 
-    public void Update()
-    {
-        timer = timer + Time.deltaTime;
-    }
+        // for caching
+        private WeaponPart[] weaponPartPartScripts;
+        private float nextFire;
+        private float timer;
 
-    public void Fire()
-    {
-        if (!(timer > nextFire))
+        private void Start()
         {
-            return;
+            audioSource = GetComponent<AudioSource>();
+            weaponPartPartScripts = GetComponentsInChildren<WeaponPart>();
         }
 
-        nextFire = timer + fireRate;
-
-        foreach (var part in weaponPartPartScripts)
+        public void Update()
         {
-            part.Fire();
+            timer = timer + Time.deltaTime;
         }
 
-        audioSource.Play();
+        public void Fire()
+        {
+            if (!(timer > nextFire))
+            {
+                return;
+            }
 
-        nextFire = nextFire - timer;
-        timer = 0.0f;
+            nextFire = timer + fireRate;
+
+            foreach (var part in weaponPartPartScripts)
+            {
+                part.Fire();
+            }
+
+            audioSource.Play();
+
+            nextFire = nextFire - timer;
+            timer = 0.0f;
+        }
     }
 }

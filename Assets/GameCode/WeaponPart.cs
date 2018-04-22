@@ -1,11 +1,14 @@
 ﻿using UnityEngine;
 
-public class WeaponPart : MonoBehaviour
+namespace GameCode
 {
-    [SerializeField] private GameObject shot;
-    
-    public void Fire()
+    public class WeaponPart : MonoBehaviour
     {
-        Instantiate(shot, transform.position, transform.rotation);
+        [SerializeField] private GameObject shot;
+    
+        public void Fire()
+        {
+            Instantiate(shot, transform.position, transform.rotation);
+        }
     }
 }

@@ -29,12 +29,16 @@ namespace GameCode
             {
                 return;
             }
+
             currentHealth -= value;
-            if (currentHealth > 0) return;
+            if (currentHealth > 0)
+            {
+                return;
+            }
+
             if (isPlayer)
             {
                 gameController.GameOver();
-            
             }
 
             if (explosion != null)

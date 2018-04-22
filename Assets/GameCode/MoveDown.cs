@@ -1,13 +1,16 @@
 ﻿using UnityEngine;
 
-public class MoveDown : MonoBehaviour
+namespace GameCode
 {
-    private Rigidbody rigidBody;
-    public float speed;
-
-    private void Start()
+    public class MoveDown : MonoBehaviour
     {
-        rigidBody = GetComponent<Rigidbody>();
-        rigidBody.velocity = transform.forward * speed;
+        private Rigidbody rigidBody;
+        public float speed;
+
+        private void Start()
+        {
+            rigidBody = GetComponent<Rigidbody>();
+            rigidBody.velocity = transform.forward * speed;
+        }
     }
 }

@@ -1,49 +1,49 @@
 ﻿using UnityEngine;
-using GameCode;
 
 // OnValidate?
 
-public class DamagedByContact : MonoBehaviour
+namespace GameCode
 {
-    private Destroyable destroyable;
-    public int damage;
-    private PlayerController playerController;
-    private Powerup powerup;
-
-    private void Start()
+    public class DamagedByContact : MonoBehaviour
     {
-        destroyable = GetComponent<Destroyable>();
-        playerController = GetComponent<PlayerController>();
-        powerup = GetComponent<Powerup>();
-    }
+        private Destroyable destroyable;
+        public int damage;
+        private Powerup powerup;
 
-    private void OnTriggerEnter(Collider other)
-    {
-        var otherPlayer = other.GetComponent<PlayerController>();
-        if (powerup != null)
+        private void Start()
         {
-            if (otherPlayer)
+            destroyable = GetComponent<Destroyable>();
+            powerup = GetComponent<Powerup>();
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            var otherPlayer = other.GetComponent<PlayerController>();
+            if (powerup != null)
             {
-                otherPlayer.CollectPowerup(powerup);
+                if (otherPlayer)
+                {
+                    otherPlayer.CollectPowerup(powerup);
+                }
+                else
+                {
+                    return;
+                }
             }
-            else
+
+            if (CompareTag("Player") && other.CompareTag("Player") ||
+                CompareTag("Enemy") && other.CompareTag("Enemy"))
             {
                 return;
             }
-        }
 
-        if ((CompareTag("Player") && other.CompareTag("Player")) ||
-            (CompareTag("Enemy") && other.CompareTag("Enemy")))
-        {
-            return;
-        }
+            var damageScript = other.gameObject.GetComponent<DamagedByContact>();
+            if (!damageScript || damageScript.damage <= 0)
+            {
+                return;
+            }
 
-        var damageScript = other.gameObject.GetComponent<DamagedByContact>();
-        if (!damageScript || damageScript.damage <= 0)
-        {
-            return;
+            destroyable.RemoveHealth(damageScript.damage);
         }
-
-        destroyable.RemoveHealth(damageScript.damage);
     }
 }

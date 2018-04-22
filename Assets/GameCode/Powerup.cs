@@ -1,12 +1,15 @@
 ﻿using UnityEngine;
 
-public class Powerup : MonoBehaviour
+namespace GameCode
 {
-    [SerializeField] private string[] ids;
-    public string id { get; private set; }
-    
-    private void Start()
+    public class Powerup : MonoBehaviour
     {
-        id = ids[Random.Range(0, ids.Length)]; 
+        [SerializeField] private string[] ids;
+        public string Id { get; private set; }
+    
+        private void Start()
+        {
+            Id = ids[Random.Range(0, ids.Length)]; 
+        }
     }
 }
