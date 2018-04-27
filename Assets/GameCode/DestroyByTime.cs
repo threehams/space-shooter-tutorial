@@ -6,9 +6,19 @@ namespace GameCode
 		[SerializeField]
 		private float lifetime;
 
-		// Use this for initialization
-		private void Start () {
-			Destroy(gameObject, lifetime);
+		private void OnSpawn()
+		{
+			Invoke("Despawn", lifetime);
 		}
+		
+		private void Despawn()
+		{
+			Pool.Despawn(gameObject);
+		}
+
+		public void OnDespawn()
+		{
+			CancelInvoke();
+		} 
 	}
 }

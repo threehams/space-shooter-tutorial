@@ -14,23 +14,27 @@ namespace GameCode
         [SerializeField] private float startWait;
         [SerializeField] private float waveWait;
 
-        [SerializeField] private Text scoreText;
+        [SerializeField] private GameObject player;
+        [SerializeField] private Transform startPosition;
+
+        [SerializeField] private Text cashText;
         [SerializeField] private Text restartText;
         [SerializeField] private Text gameOverText;
 
-        private int score;
+        private int cash;
         private bool gameOver;
         private bool restart;
 
         private void Start()
         {
-            score = 0;
-            UpdateScore();
+            cash = 0;
+            UpdateCash();
             StartCoroutine(SpawnWaves());
             gameOver = false;
             restart = false;
             restartText.text = "";
             gameOverText.text = "";
+            Pool.Spawn(player, startPosition.position, startPosition.rotation);
         }
 
         private IEnumerator SpawnWaves()
@@ -44,7 +48,7 @@ namespace GameCode
                     var spawnPosition = new Vector3(Random.Range(-spawnValues.x, spawnValues.x), spawnValues.y,
                         spawnValues.z);
                     var spawnRotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
-                    Instantiate(hazard, spawnPosition, spawnRotation);
+                    Pool.Spawn(hazard, spawnPosition, spawnRotation);
                     yield return new WaitForSeconds(spawnWait);
                 }
 
@@ -60,10 +64,10 @@ namespace GameCode
             }
         }
 
-        public void AddScore(int newScore)
+        public void AddCash(int newCash)
         {
-            score += newScore;
-            UpdateScore();
+            cash += newCash;
+            UpdateCash();
         }
 
         public void GameOver()
@@ -85,9 +89,9 @@ namespace GameCode
             }
         }
 
-        private void UpdateScore()
+        private void UpdateCash()
         {
-            scoreText.text = "Score: " + score;
+            cashText.text = "$" + cash;
         }
     }
 }

@@ -7,7 +7,6 @@ namespace GameCode
         public float tumble;
         public Rigidbody rigidBody;
 
-        // Use this for initialization
         private void Start()
         {
             rigidBody = GetComponent<Rigidbody>();

@@ -13,10 +13,15 @@ namespace GameCode
         private float timer;
         private Rigidbody target;
 
+        public void OnDespawn()
+        {
+            target = null;
+        }
+        
         private void Update()
         {
             timer = timer + Time.deltaTime;
-            if (target)
+            if (target != null && target.gameObject.activeInHierarchy)
             {
                 RotateAim();
                 return;
@@ -77,8 +82,6 @@ namespace GameCode
         private static float AimAhead(Vector3 delta, Vector3 relativeVelocity, float muzzleVelocity)
         {
             // http://howlingmoonsoftware.com/wordpress/leading-a-target/
-            // Quaternion can convert to angles
-
             var a = Vector3.Dot(relativeVelocity, relativeVelocity) - muzzleVelocity * muzzleVelocity;
             var b = 2f * Vector3.Dot(relativeVelocity, delta);
             var c = Vector3.Dot(delta, delta);

@@ -8,7 +8,7 @@ namespace GameCode
     
         public void Fire()
         {
-            Instantiate(shot, transform.position, transform.rotation);
+            Pool.Spawn(shot, transform.position, transform.rotation);
         }
     }
 }

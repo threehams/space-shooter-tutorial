@@ -17,10 +17,15 @@ namespace GameCode
 
         private void Start()
         {
-            currentHealth = maxHealth;
             var gameControllerObject = GameObject.FindWithTag("GameController");
             gameController = gameControllerObject.GetComponent<GameController>();
             isPlayer = GetComponent<PlayerController>();
+            OnDespawn();
+        }
+
+        public void OnDespawn()
+        {
+            currentHealth = maxHealth;
         }
 
         public void RemoveHealth(int value)
@@ -43,16 +48,16 @@ namespace GameCode
 
             if (explosion != null)
             {
-                Instantiate(explosion, transform.position, transform.rotation);
+                Pool.Spawn(explosion, transform.position, transform.rotation);
             }
 
             if (powerup && Random.value < powerupChance)
             {
-                Instantiate(powerup, transform.position, Quaternion.identity);
+                Pool.Spawn(powerup, transform.position, Quaternion.identity);
             }
 
-            gameController.AddScore(scoreValue);
-            Destroy(gameObject);
+            gameController.AddCash(scoreValue);
+            Pool.Despawn(gameObject);
         }
     }
 }

@@ -3,187 +3,59 @@
     using System.Collections.Generic;
     using UnityEngine;
 
-
-    public class Pool : MonoBehaviour
+    public static class Pool
     {
-        public GameObject prefab;
-        public int preloadAmount;
-        public bool limit;
-        public int maxCount;
-        public List<GameObject> active = new List<GameObject>();
-        public List<GameObject> inactive = new List<GameObject>();
+        private static Dictionary<GameObject, Stack<GameObject>> inactive =
+            new Dictionary<GameObject, Stack<GameObject>>();
 
-        private int TotalCount
+        private static Dictionary<GameObject, GameObject> active =
+            new Dictionary<GameObject, GameObject>();
+
+        public static GameObject Spawn(
+            GameObject prefab,
+            Vector3 position,
+            Quaternion rotation
+        )
         {
-            get
+            var pool = GetOrCreatePool(prefab);
+            GameObject item;
+            if (pool.Count > 0)
             {
-                return active.Count + inactive.Count;
+                item = pool.Pop();
+            }
+            else
+            {
+                item = Object.Instantiate(prefab) as GameObject;
+            }
+
+            item.SetActive(true);
+            item.SendMessage("OnSpawn", SendMessageOptions.DontRequireReceiver);
+            item.transform.position = position;
+            item.transform.rotation = rotation;
+            active[item] = prefab;
+            return item;
+        }
+
+        private static Stack<GameObject> GetOrCreatePool(GameObject key)
+        {
+            if (inactive.ContainsKey(key))
+            {
+                return inactive[key];
+            }
+            else
+            {
+                inactive[key] = new Stack<GameObject>();
+                return inactive[key];
             }
         }
 
-        public void Awake()
+        public static void Despawn(GameObject instance)
         {
-            if (prefab == null)
-            {
-                return;
-            }
-
-            PoolManager.Add(this);
-            Preload();
-        }
-
-
-        public void Despawn(GameObject instance)
-        {
-            if (!active.Contains(instance))
-            {
-                Debug.LogWarning(
-                    "Can't despawn - Instance not found: "
-                    + instance.name + " in Pool " + name);
-                return;
-            }
-
-            if (instance.transform.parent != transform)
-            {
-                instance.transform.parent = transform;
-            }
-
-            active.Remove(instance);
-            inactive.Add(instance);
-
-            instance.BroadcastMessage("OnDespawn", SendMessageOptions.DontRequireReceiver);
-
+            instance.SendMessage("OnDespawn", SendMessageOptions.DontRequireReceiver);
             instance.SetActive(false);
-        }
-
-
-        public void DespawnAll()
-        {
-            PoolManager.DeactivatePool(prefab);
-        }
-
-
-        public void DestroyCount(int count)
-        {
-            if (count > inactive.Count)
-            {
-                Debug.LogWarning(
-                    "Destroy Count value: " + count + " is greater than inactive Count: "
-                    + inactive.Count + ". Destroying all available inactive objects of type: " +
-                    prefab.name + "." +
-                    "Use DestroyUnused(false) instead to achieve the same.");
-                DestroyUnused(false);
-                return;
-            }
-
-            for (var i = inactive.Count - 1; i >= inactive.Count - count; i--)
-            {
-                Destroy(inactive[i]);
-            }
-
-            inactive.RemoveRange(inactive.Count - count, count);
-        }
-
-
-        public void DestroyUnused(bool preloadLimit)
-        {
-            if (preloadLimit)
-            {
-                for (var i = inactive.Count - 1; i >= preloadAmount; i--)
-                {
-                    Destroy(inactive[i]);
-                }
-
-                if (inactive.Count > preloadAmount)
-                {
-                    inactive.RemoveRange(preloadAmount, inactive.Count - preloadAmount);
-                }
-            }
-            else
-            {
-                foreach (var item in inactive)
-                {
-                    Destroy(item);
-                }
-
-                inactive.Clear();
-            }
-        }
-
-
-        public void OnDestroy()
-        {
-            active.Clear();
-            inactive.Clear();
-        }
-
-
-        public void Preload()
-        {
-            if (prefab == null)
-            {
-                Debug.LogWarning("Cannot preload empty prefab.");
-                return;
-            }
-
-            for (var i = TotalCount; i < preloadAmount; i++)
-            {
-                var poolObject = Instantiate(prefab, Vector3.zero, Quaternion.identity);
-                poolObject.transform.SetParent(transform);
-
-                Rename(poolObject.transform);
-                poolObject.SetActive(false);
-                inactive.Add(poolObject);
-            }
-        }
-
-
-        public GameObject Spawn(Vector3 position, Quaternion rotation)
-        {
-            GameObject poolObject;
-            Transform poolTransform;
-
-            if (inactive.Count > 0)
-            {
-                poolObject = inactive[0];
-                inactive.RemoveAt(0);
-
-                poolTransform = poolObject.transform;
-            }
-            else
-            {
-                if (limit
-                    && active.Count >= maxCount)
-                {
-                    return null;
-                }
-
-                poolObject = Instantiate(prefab);
-                poolTransform = poolObject.transform;
-                Rename(poolTransform);
-            }
-
-            poolTransform.position = position;
-            poolTransform.rotation = rotation;
-
-            if (poolTransform.parent != transform)
-            {
-                poolTransform.parent = transform;
-            }
-
-            active.Add(poolObject);
-
-            poolObject.SetActive(true);
-
-            poolObject.BroadcastMessage("OnSpawn", SendMessageOptions.DontRequireReceiver);
-
-            return poolObject;
-        }
-
-
-        private void Rename(Transform instance)
-        {
-            instance.name += (TotalCount + 1).ToString("#000");
+            var key = active[instance];
+            inactive[key].Push(instance);
+            active.Remove(instance);
         }
     }
 }
