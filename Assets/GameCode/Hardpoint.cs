@@ -10,7 +10,7 @@ namespace GameCode
             Rear,
             Left,
             Right
-        };
+        }
 
         public HardpointType type;
         

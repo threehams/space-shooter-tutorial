@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace GameCode
+﻿namespace GameCode
 {
     [System.Serializable]
     public class WeaponData

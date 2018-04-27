@@ -9,7 +9,6 @@ namespace GameCode
         [SerializeField] private float tilt;
         [SerializeField] private float maneuverDistance;
         [SerializeField] private Vector2 maneuverTime;
-        [SerializeField] private Vector2 maneuverWait;
         [SerializeField] private float smoothing;
         [SerializeField] private Boundary boundary;
 

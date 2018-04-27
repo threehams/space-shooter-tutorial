@@ -89,10 +89,8 @@ namespace GameCode
             {
                 return 2f * c / (Mathf.Sqrt(determinant) - b);
             }
-            else
-            {
-                return -1f;
-            }
+
+            return -1f;
         }
 
         private float DeltaToTarget(float current, float delta)
