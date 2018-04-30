@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace GameCode
 {
-    public class WeaponAimer : MonoBehaviour
+    public class WeaponAimer : MonoBehaviour, ISpawn
     {
         [SerializeField] private float aimTimeout;
         [SerializeField] private float aimRadius;
@@ -12,6 +12,10 @@ namespace GameCode
         [SerializeField] private float shotSpeed;
         private float timer;
         private Rigidbody target;
+
+        public void OnSpawn()
+        {
+        }
 
         public void OnDespawn()
         {

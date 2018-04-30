@@ -3,6 +3,12 @@
     using System.Collections.Generic;
     using UnityEngine;
 
+    interface ISpawn
+    {
+        void OnSpawn();
+        void OnDespawn();
+    }
+
     public static class Pool
     {
         private static Dictionary<GameObject, Stack<GameObject>> inactive =
@@ -18,18 +24,14 @@
         )
         {
             var pool = GetOrCreatePool(prefab);
-            GameObject item;
-            if (pool.Count > 0)
-            {
-                item = pool.Pop();
-            }
-            else
-            {
-                item = Object.Instantiate(prefab) as GameObject;
-            }
+            var item = pool.Count > 0 ? pool.Pop() : Object.Instantiate(prefab);
 
             item.SetActive(true);
-            item.SendMessage("OnSpawn", SendMessageOptions.DontRequireReceiver);
+            var interfaces = item.GetComponents<ISpawn>();
+            foreach (var spawn in interfaces)
+            {
+                spawn.OnSpawn();
+            }
             item.transform.position = position;
             item.transform.rotation = rotation;
             active[item] = prefab;
@@ -51,7 +53,11 @@
 
         public static void Despawn(GameObject instance)
         {
-            instance.SendMessage("OnDespawn", SendMessageOptions.DontRequireReceiver);
+            var interfaces = instance.GetComponents<ISpawn>();
+            foreach (var spawn in interfaces)
+            {
+                spawn.OnDespawn();
+            }
             instance.SetActive(false);
             var key = active[instance];
             inactive[key].Push(instance);

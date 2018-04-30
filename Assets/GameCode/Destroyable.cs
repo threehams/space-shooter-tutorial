@@ -3,7 +3,7 @@ using Random = UnityEngine.Random;
 
 namespace GameCode
 {
-    public class Destroyable : MonoBehaviour
+    public class Destroyable : MonoBehaviour, ISpawn
     {
         [SerializeField] private int scoreValue;
         [SerializeField] private GameObject explosion;
@@ -13,14 +13,19 @@ namespace GameCode
         private int currentHealth;
         private bool isPlayer;
 
-        private GameController gameController;
+        private Game game;
 
         private void Start()
         {
-            var gameControllerObject = GameObject.FindWithTag("GameController");
-            gameController = gameControllerObject.GetComponent<GameController>();
-            isPlayer = GetComponent<PlayerController>();
+            // TODO replace with event
+            var gameObj = GameObject.FindWithTag("GameController");
+            game = gameObj.GetComponent<Game>();
+            isPlayer = GetComponent<Player>();
             OnDespawn();
+        }
+
+        public void OnSpawn()
+        {
         }
 
         public void OnDespawn()
@@ -43,7 +48,7 @@ namespace GameCode
 
             if (isPlayer)
             {
-                gameController.GameOver();
+                game.GameOver();
             }
 
             if (explosion != null)
@@ -56,7 +61,7 @@ namespace GameCode
                 Pool.Spawn(powerup, transform.position, Quaternion.identity);
             }
 
-            gameController.AddCash(scoreValue);
+            game.AddCash(scoreValue);
             Pool.Despawn(gameObject);
         }
     }

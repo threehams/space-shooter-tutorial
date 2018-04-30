@@ -18,7 +18,7 @@ namespace GameCode
 
         private void OnTriggerEnter(Collider other)
         {
-            var otherPlayer = other.GetComponent<PlayerController>();
+            var otherPlayer = other.GetComponent<Player>();
             if (powerup != null)
             {
                 if (otherPlayer)
