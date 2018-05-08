@@ -5,12 +5,6 @@ using UnityEngine;
 namespace GameCode
 {
     [System.Serializable]
-    public class Boundary
-    {
-        public float xMin, xMax, zMin, zMax;
-    }
-
-    [System.Serializable]
     public class WeaponLevels
     {
         public string id;
@@ -33,54 +27,25 @@ namespace GameCode
 
     public class Player : MonoBehaviour
     {
-        [SerializeField] private float speed;
-        [SerializeField] private float tilt;
-        [SerializeField] private Boundary boundary;
-        [SerializeField] private Inventory inventory;
         [SerializeField] private WeaponDatabase weaponDatabase;
 
-        private Rigidbody rigidBody;
         private Hardpoint[] hardpoints;
+
+        public Inventory inventory;
 
         private void Awake()
         {
             weaponDatabase.PopulateDatabase();
-        }
-
-        private void Start()
-        {
-            rigidBody = GetComponent<Rigidbody>();
             hardpoints = GetComponentsInChildren<Hardpoint>();
             ReplaceWeapons();
         }
 
-        private void Update()
+        public void Fire()
         {
-            if (Input.GetButton("Fire1"))
+            foreach (var hardpoint in hardpoints)
             {
-                foreach (var hardpoint in hardpoints)
-                {
-                    hardpoint.Fire();
-                }
+                hardpoint.Fire();
             }
-        }
-
-        private void FixedUpdate()
-        {
-            rigidBody.velocity = Vector3.zero;
-            // these aren't tank controls, but missiles will be.
-            var moveHorizontal = Input.GetAxis("Horizontal");
-            var moveVertical = Input.GetAxis("Vertical");
-            
-            rigidBody.velocity = new Vector3(moveHorizontal, 0.0f, moveVertical) * speed;
-
-            rigidBody.position = new Vector3(
-                Mathf.Clamp(rigidBody.position.x, boundary.xMin, boundary.xMax),
-                0.0f,
-                Mathf.Clamp(rigidBody.position.z, boundary.zMin, boundary.zMax)
-            );
-
-            rigidBody.rotation = Quaternion.Euler(0.0f, 0.0f, rigidBody.velocity.x * -tilt);
         }
 
         public void CollectPowerup(Powerup powerup)

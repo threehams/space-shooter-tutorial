@@ -17,7 +17,6 @@ namespace GameCode
 
         private void Start()
         {
-            // TODO replace with event
             var gameObj = GameObject.FindWithTag("GameController");
             game = gameObj.GetComponent<Game>();
             isPlayer = GetComponent<Player>();

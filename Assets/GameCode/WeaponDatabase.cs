@@ -24,5 +24,11 @@ namespace GameCode
         {
             return database[id];
         }
+        
+        public IEnumerator<WeaponListData> GetEnumerator()
+        {
+            return database.Values.GetEnumerator();
+        }
+
     }
 }
