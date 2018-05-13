@@ -10,10 +10,10 @@ namespace GameCode
         {
             if (other.GetComponent<DestroyByBoundary>())
             {
-                var player = FindObjectOfType<Player>();
+                var playerInput = FindObjectOfType<PlayerInput>();
                 shopPanel.SetActive(true);
-                player.enabled = false;
-                player.GetComponent<ShopPlayerAi>().enabled = true;
+                playerInput.enabled = false;
+                playerInput.GetComponent<ShopPlayerAi>().enabled = true;
             }
         }
     }

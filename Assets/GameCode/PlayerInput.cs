@@ -2,6 +2,7 @@
 
 namespace GameCode
 {
+    // Gizmo
     [System.Serializable]
     public class Boundary
     {
