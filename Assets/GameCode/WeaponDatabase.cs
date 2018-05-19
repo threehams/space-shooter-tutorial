@@ -1,34 +1,25 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using UnityEngine;
 
 namespace GameCode
-{
+{   
     [CreateAssetMenu]
     public class WeaponDatabase : ScriptableObject
     {
-        [SerializeField] private WeaponListData[] weapons;
+        public WeaponListData[] weapons;
 
-        private Dictionary<string, WeaponListData> database;
-
-        public void PopulateDatabase()
+        public int TotalCost(WeaponListData weaponListData, int weaponLevel)
         {
-            database = new Dictionary<string, WeaponListData>();
-            foreach (var entry in weapons)
-            {
-                database.Add(entry.id, entry);
-            }
+            var databaseList = weapons.First(weapon => weapon == weaponListData);
+            return databaseList
+                .weaponLevels.Where(level => level.level <= weaponLevel)
+                .Sum(level => level.weapon.cost);
         }
 
-
-        public WeaponListData GetWeaponListData(string id)
+        public int NextCost(Weapon weapon)
         {
-            return database[id];
+            var nextWeapon = weapon.weaponListData.weaponLevels[weapon.level + 1];
+            return nextWeapon == null ? int.MaxValue : nextWeapon.cost;
         }
-        
-        public IEnumerator<WeaponListData> GetEnumerator()
-        {
-            return database.Values.GetEnumerator();
-        }
-
     }
 }

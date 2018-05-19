@@ -14,6 +14,11 @@ namespace GameCode
         [SerializeField] private Text gameOverText;
 
         private int cash;
+        public int Cash
+        {
+            get { return cash; }
+        }
+
         private bool gameOver;
         private bool restart;
 
@@ -31,6 +36,12 @@ namespace GameCode
         public void AddCash(int newCash)
         {
             cash += newCash;
+            UpdateCash();
+        }
+
+        public void RemoveCash(int newCash)
+        {
+            cash -= newCash;
             UpdateCash();
         }
 

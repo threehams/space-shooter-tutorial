@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace GameCode
@@ -8,39 +11,141 @@ namespace GameCode
         public GameObject playerPoint;
 
         [SerializeField] private WeaponDatabase weaponDatabase;
-        [SerializeField] private GameObject buttonPanel;
-        [SerializeField] private GameObject weaponButton;
+        [SerializeField] private GameObject weaponPanel;
+        [SerializeField] private GameObject weaponActionsPanel;
+        [SerializeField] private GameObject shopButtonPrefab;
+        [SerializeField] private GameObject hardpointPanel;
+        [SerializeField] private GameObject fireButton;
+        [SerializeField] private GameObject upgradeButton;
+        [SerializeField] private GameObject downgradeButton;
+        [SerializeField] private GameObject backButton;
 
+        private Hardpoint selectedHardpoint;
         private Player player;
+        private ShopPlayerAi playerAi;
+        private Game game;
 
         private void Awake()
         {
             gameObject.SetActive(false);
+            hardpointPanel.SetActive(true);
+            weaponPanel.SetActive(false);
+            weaponActionsPanel.SetActive(false);
+            upgradeButton.GetComponent<Button>().onClick.AddListener(OnUpgrade);
+            downgradeButton.GetComponent<Button>().onClick.AddListener(OnDowngrade);
+            backButton.GetComponent<Button>().onClick.AddListener(OnBack);
         }
 
         private void OnEnable()
         {
             player = FindObjectOfType<Player>();
-            foreach (var weapon in weaponDatabase)
+            game = FindObjectOfType<Game>();
+            playerAi = FindObjectOfType<ShopPlayerAi>();
+            fireButton.GetComponent<Button>().onClick.AddListener(() => playerAi.fire = !playerAi.fire);
+            hardpointPanel.SetActive(true);
+            weaponPanel.SetActive(false);
+            weaponActionsPanel.SetActive(false);
+            PopulateHardpoints(player.hardpoints);
+        }
+
+        private void PopulateWeapons(IEnumerable<WeaponListData> weapons)
+        {
+            foreach (Transform child in weaponPanel.transform)
             {
-                var button = Instantiate(weaponButton, buttonPanel.transform);
-                button.GetComponent<WeaponButton>().Weapon = weapon;
-                var localWeapon = weapon;
-                button.GetComponent<Button>().onClick.AddListener(delegate { onSelectWeapon(localWeapon); });
+                Destroy(child.gameObject);
+            }
+
+            foreach (var weapon in weapons)
+            {
+                var button = Instantiate(shopButtonPrefab, weaponPanel.transform);
+                var shopButton = button.GetComponent<ShopButton>();
+                shopButton.DisplayName = weapon.displayName;
+                button.GetComponent<Button>().onClick.AddListener(() => OnSelectWeapon(weapon));
             }
         }
 
-        public void onDowngrade()
+        private void PopulateHardpoints(IEnumerable<Hardpoint> hardpoints)
         {
+            foreach (Transform child in hardpointPanel.transform)
+            {
+                Destroy(child.gameObject);
+            }
+
+            foreach (var hardpoint in hardpoints)
+            {
+                var button = Instantiate(shopButtonPrefab, hardpointPanel.transform);
+                button.GetComponent<ShopButton>().DisplayName = hardpoint.displayName;
+                button.GetComponent<Button>().onClick.AddListener(() => OnSelectHardpoint(hardpoint));
+            }
         }
 
-        public void onUpgrade()
+        private void OnDowngrade()
         {
+            var current = selectedHardpoint.weapon;
+            if (current.level == 0)
+            {
+                return;
+            }
+
+            selectedHardpoint.ReplaceWeapon(current.weaponListData.weaponLevels[current.level - 1].weapon);
+            game.AddCash(current.cost);
         }
 
-        public void onSelectWeapon(WeaponListData weapon)
+        private void OnUpgrade()
         {
-            
+            var current = selectedHardpoint.weapon;
+            if (current.level == current.weaponListData.weaponLevels.Length - 1)
+            {
+                return;
+            }
+            var next = current.weaponListData.weaponLevels[current.level + 1];
+            if (next == null || next.weapon.cost > game.Cash)
+            {
+                return;
+            }
+
+            selectedHardpoint.ReplaceWeapon(next.weapon);
+            game.RemoveCash(next.cost);            
+        }
+
+        private void OnSelectWeapon(WeaponListData selectedWeapon)
+        {
+            // not allowing preview mode - you click it, you buy it
+            var current = selectedHardpoint.weapon;
+            var currentValue = 0;
+            if (current != null)
+            {
+                currentValue = weaponDatabase.TotalCost(current.weaponListData, current.level);
+            }
+
+            var newWeapon = selectedWeapon.weaponLevels[0].weapon;
+
+            // can't afford it even after selling your current weapon
+            if (currentValue + game.Cash < newWeapon.cost)
+            {
+                return;
+            }
+
+            selectedHardpoint.ReplaceWeapon(newWeapon);
+            game.RemoveCash(newWeapon.cost - currentValue);
+        }
+
+        private void OnBack()
+        {
+            hardpointPanel.SetActive(true);
+            weaponPanel.SetActive(false);
+            weaponActionsPanel.SetActive(false);
+            selectedHardpoint = null;
+            PopulateHardpoints(player.hardpoints);
+        }
+
+        private void OnSelectHardpoint(Hardpoint hardpoint)
+        {
+            hardpointPanel.SetActive(false);
+            weaponPanel.SetActive(true);
+            weaponActionsPanel.SetActive(true);
+            selectedHardpoint = hardpoint;
+            PopulateWeapons(weaponDatabase.weapons.Where(weapon => weapon.hardpoint == hardpoint.type));
         }
     }
 }

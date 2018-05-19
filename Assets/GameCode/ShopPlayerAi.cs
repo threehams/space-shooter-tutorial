@@ -5,6 +5,7 @@ namespace GameCode
     public class ShopPlayerAi : MonoBehaviour
     {
         private Player player;
+        public bool fire;
         
         private void Awake()
         {
@@ -21,7 +22,10 @@ namespace GameCode
 
         private void Update()
         {
-            player.Fire();
+            if (fire)
+            {
+                player.Fire();
+            }
         }
     }
 }

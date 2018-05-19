@@ -5,7 +5,12 @@ namespace GameCode
     public class Weapon : MonoBehaviour
     {
         public Hardpoint.HardpointType hardpoint;
+        public WeaponListData weaponListData;
+        public int level;
+        public int cost;
+        
         [SerializeField] private float fireRate;
+
         private AudioSource audioSource;
 
         // for caching

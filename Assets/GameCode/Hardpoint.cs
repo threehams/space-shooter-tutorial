@@ -8,13 +8,13 @@ namespace GameCode
         {
             Front,
             Rear,
-            Left,
-            Right
+            Side
         }
 
+        public string displayName;
         public HardpointType type;
         
-        private Weapon weapon;
+        public Weapon weapon;
 
         public void ReplaceWeapon(Weapon weaponClass)
         {

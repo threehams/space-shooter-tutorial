@@ -8,29 +8,14 @@ namespace GameCode
     {
         private Destroyable destroyable;
         public int damage;
-        private Powerup powerup;
 
         private void Start()
         {
             destroyable = GetComponent<Destroyable>();
-            powerup = GetComponent<Powerup>();
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            var otherPlayer = other.GetComponent<Player>();
-            if (powerup != null)
-            {
-                if (otherPlayer)
-                {
-                    otherPlayer.CollectPowerup(powerup);
-                }
-                else
-                {
-                    return;
-                }
-            }
-
             if (CompareTag("Player") && other.CompareTag("Player") ||
                 CompareTag("Enemy") && other.CompareTag("Enemy"))
             {

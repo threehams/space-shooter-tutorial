@@ -7,15 +7,15 @@ namespace GameCode
     [System.Serializable]
     public class WeaponLevels
     {
-        public string id;
+        public WeaponListData weaponListData;
         public int currentLevel;
-        public bool active;
+        public Hardpoint hardpoint;
 
-        public WeaponLevels(string id, int currentLevel, bool active)
+        public WeaponLevels(WeaponListData weaponListData, int currentLevel, Hardpoint hardpoint)
         {
-            this.id = id;
+            this.weaponListData = weaponListData;
             this.currentLevel = currentLevel;
-            this.active = active;
+            this.hardpoint = hardpoint;
         }
     }
 
@@ -27,15 +27,11 @@ namespace GameCode
 
     public class Player : MonoBehaviour
     {
-        [SerializeField] private WeaponDatabase weaponDatabase;
-
-        private Hardpoint[] hardpoints;
-
+        public Hardpoint[] hardpoints;
         public Inventory inventory;
 
         private void Awake()
         {
-            weaponDatabase.PopulateDatabase();
             hardpoints = GetComponentsInChildren<Hardpoint>();
             ReplaceWeapons();
         }
@@ -48,42 +44,12 @@ namespace GameCode
             }
         }
 
-        public void CollectPowerup(Powerup powerup)
-        {
-            var currentWeapon = inventory.weaponLevels.FirstOrDefault(level => level.id == powerup.Id);
-            var maxLevel = weaponDatabase.GetWeaponListData(powerup.Id).weaponLevels.Length - 1;
-            if (currentWeapon == null)
-            {
-                DeactivateOtherWeapons(powerup.Id);
-                inventory.weaponLevels.Add(new WeaponLevels(powerup.Id, 1, true));
-            }
-            else if (currentWeapon.active == false)
-            {
-                DeactivateOtherWeapons(powerup.Id);
-                currentWeapon.active = true;
-            }
-            else if (currentWeapon.currentLevel <= maxLevel)
-            {
-                currentWeapon.currentLevel++;
-            }
-
-            ReplaceWeapons();
-        }
-
-        private void DeactivateOtherWeapons(string id)
-        {
-            foreach (var weaponLevel in inventory.weaponLevels.Where(level => level.id != id))
-            {
-                weaponLevel.active = false;
-            }
-        }
-
-        private void ReplaceWeapons()
+        public void ReplaceWeapons()
         {
             foreach (var weaponLevel in inventory.weaponLevels)
             {
                 var currentLevel = weaponLevel.currentLevel;
-                var weaponCollection = weaponDatabase.GetWeaponListData(weaponLevel.id);
+                var weaponCollection = weaponLevel.weaponListData;
                 var weapon = weaponCollection
                     .weaponLevels
                     .Where(weaponData => weaponData.level == currentLevel)
