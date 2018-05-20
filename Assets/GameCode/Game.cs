@@ -12,8 +12,12 @@ namespace GameCode
         [SerializeField] private Text cashText;
         [SerializeField] private Text restartText;
         [SerializeField] private Text gameOverText;
+        [SerializeField] private GameObject shopPanel;
+        [SerializeField] private GameObject[] levels;
 
         private int cash;
+        private int currentLevel;
+        
         public int Cash
         {
             get { return cash; }
@@ -30,6 +34,11 @@ namespace GameCode
             restart = false;
             restartText.text = "";
             gameOverText.text = "";
+            foreach (var level in levels)
+            {
+                level.SetActive(false);
+            }
+            levels[0].SetActive(true);
             Pool.Spawn(player, startPosition.position, startPosition.rotation);
         }
 
@@ -67,6 +76,26 @@ namespace GameCode
         private void UpdateCash()
         {
             cashText.text = "$" + cash;
+        }
+
+        public void EndLevel()
+        {
+            levels[currentLevel].SetActive(false);
+            var playerInput = FindObjectOfType<PlayerInput>();
+            shopPanel.SetActive(true);
+            playerInput.enabled = false;
+            playerInput.GetComponent<ShopPlayerAi>().enabled = true;
+        }
+
+        public void StartNextLevel()
+        {
+            var playerInput = FindObjectOfType<PlayerInput>();
+            shopPanel.SetActive(false);
+            playerInput.enabled = true;
+            playerInput.GetComponent<ShopPlayerAi>().enabled = false;
+
+            currentLevel++;
+            levels[currentLevel].SetActive(true);
         }
     }
 }

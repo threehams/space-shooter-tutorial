@@ -19,6 +19,7 @@ namespace GameCode
         [SerializeField] private GameObject upgradeButton;
         [SerializeField] private GameObject downgradeButton;
         [SerializeField] private GameObject backButton;
+        [SerializeField] private GameObject nextLevelButton;
 
         private Hardpoint selectedHardpoint;
         private Player player;
@@ -34,6 +35,7 @@ namespace GameCode
             upgradeButton.GetComponent<Button>().onClick.AddListener(OnUpgrade);
             downgradeButton.GetComponent<Button>().onClick.AddListener(OnDowngrade);
             backButton.GetComponent<Button>().onClick.AddListener(OnBack);
+            nextLevelButton.GetComponent<Button>().onClick.AddListener(OnNextLevel);
         }
 
         private void OnEnable()
@@ -146,6 +148,11 @@ namespace GameCode
             weaponActionsPanel.SetActive(true);
             selectedHardpoint = hardpoint;
             PopulateWeapons(weaponDatabase.weapons.Where(weapon => weapon.hardpoint == hardpoint.type));
+        }
+
+        private void OnNextLevel()
+        {
+            game.StartNextLevel();
         }
     }
 }

@@ -15,11 +15,5 @@ namespace GameCode
                 .weaponLevels.Where(level => level.level <= weaponLevel)
                 .Sum(level => level.weapon.cost);
         }
-
-        public int NextCost(Weapon weapon)
-        {
-            var nextWeapon = weapon.weaponListData.weaponLevels[weapon.level + 1];
-            return nextWeapon == null ? int.MaxValue : nextWeapon.cost;
-        }
     }
 }
