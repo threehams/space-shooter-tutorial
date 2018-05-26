@@ -8,6 +8,6 @@ namespace GameCode
         public string id;
         public string displayName;
         public Hardpoint.HardpointType hardpoint;
-        public WeaponData[] weaponLevels;
+        public Weapon[] weaponLevels;
     }
 }

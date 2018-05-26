@@ -89,7 +89,7 @@ namespace GameCode
                 return;
             }
 
-            selectedHardpoint.ReplaceWeapon(current.weaponListData.weaponLevels[current.level - 1].weapon);
+            selectedHardpoint.ReplaceWeapon(current.weaponListData.weaponLevels[current.level - 1]);
             game.AddCash(current.cost);
         }
 
@@ -100,14 +100,15 @@ namespace GameCode
             {
                 return;
             }
+
             var next = current.weaponListData.weaponLevels[current.level + 1];
-            if (next == null || next.weapon.cost > game.Cash)
+            if (next == null || next.cost > game.Cash)
             {
                 return;
             }
 
-            selectedHardpoint.ReplaceWeapon(next.weapon);
-            game.RemoveCash(next.cost);            
+            selectedHardpoint.ReplaceWeapon(next);
+            game.RemoveCash(next.cost);
         }
 
         private void OnSelectWeapon(WeaponListData selectedWeapon)
@@ -120,7 +121,7 @@ namespace GameCode
                 currentValue = weaponDatabase.TotalCost(current.weaponListData, current.level);
             }
 
-            var newWeapon = selectedWeapon.weaponLevels[0].weapon;
+            var newWeapon = selectedWeapon.weaponLevels[0];
 
             // can't afford it even after selling your current weapon
             if (currentValue + game.Cash < newWeapon.cost)

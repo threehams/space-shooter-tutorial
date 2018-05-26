@@ -52,9 +52,7 @@ namespace GameCode
                 var weaponCollection = weaponLevel.weaponListData;
                 var weapon = weaponCollection
                     .weaponLevels
-                    .Where(weaponData => weaponData.level == currentLevel)
-                    .Select(weaponData => weaponData.weapon)
-                    .First();
+                    .First(weaponData => weaponData.level == currentLevel);
                 foreach (var hardpoint in hardpoints)
                 {
                     if (hardpoint.type == weaponCollection.hardpoint)

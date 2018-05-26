@@ -13,7 +13,7 @@ namespace GameCode
             var databaseList = weapons.First(weapon => weapon == weaponListData);
             return databaseList
                 .weaponLevels.Where(level => level.level <= weaponLevel)
-                .Sum(level => level.weapon.cost);
+                .Sum(level => level.cost);
         }
     }
 }
