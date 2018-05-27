@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
 
-// OnValidate?
-
 namespace GameCode
 {
     public class DamagedByContact : MonoBehaviour

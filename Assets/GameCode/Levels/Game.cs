@@ -15,20 +15,16 @@ namespace GameCode
         [SerializeField] private GameObject shopPanel;
         [SerializeField] private GameObject[] levels;
 
-        private int cash;
         private int currentLevel;
-        
-        public int Cash
-        {
-            get { return cash; }
-        }
+
+        public int Cash { get; private set; }
 
         private bool gameOver;
         private bool restart;
 
         private void Start()
         {
-            cash = 0;
+            Cash = 0;
             UpdateCash();
             gameOver = false;
             restart = false;
@@ -38,19 +34,20 @@ namespace GameCode
             {
                 level.SetActive(false);
             }
+
             levels[0].SetActive(true);
             Pool.Spawn(player, startPosition.position, startPosition.rotation);
         }
 
         public void AddCash(int newCash)
         {
-            cash += newCash;
+            Cash += newCash;
             UpdateCash();
         }
 
         public void RemoveCash(int newCash)
         {
-            cash -= newCash;
+            Cash -= newCash;
             UpdateCash();
         }
 
@@ -75,7 +72,7 @@ namespace GameCode
 
         private void UpdateCash()
         {
-            cashText.text = "$" + cash;
+            cashText.text = "$" + Cash;
         }
 
         public void EndLevel()
