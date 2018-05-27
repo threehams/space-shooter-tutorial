@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
+using UniRx;
 
 namespace GameCode
 {
@@ -9,27 +9,20 @@ namespace GameCode
         [SerializeField] private GameObject player;
         [SerializeField] private Transform startPosition;
 
-        [SerializeField] private Text cashText;
-        [SerializeField] private Text restartText;
-        [SerializeField] private Text gameOverText;
         [SerializeField] private GameObject shopPanel;
         [SerializeField] private GameObject[] levels;
 
         private int currentLevel;
 
-        public int Cash { get; private set; }
-
-        private bool gameOver;
-        private bool restart;
+        public ReactiveProperty<int> cash = new ReactiveProperty<int>(0);
+        public ReactiveProperty<bool> gameOver = new ReactiveProperty<bool>(false);
+        public ReactiveProperty<bool> restart = new ReactiveProperty<bool>(false);
 
         private void Start()
         {
-            Cash = 0;
-            UpdateCash();
-            gameOver = false;
-            restart = false;
-            restartText.text = "";
-            gameOverText.text = "";
+            cash.Value = 0;
+            gameOver.Value = false;
+            restart.Value = false;
             foreach (var level in levels)
             {
                 level.SetActive(false);
@@ -41,25 +34,22 @@ namespace GameCode
 
         public void AddCash(int newCash)
         {
-            Cash += newCash;
-            UpdateCash();
+            cash.Value += newCash;
         }
 
         public void RemoveCash(int newCash)
         {
-            Cash -= newCash;
-            UpdateCash();
+            cash.Value -= newCash;
         }
 
         public void GameOver()
         {
-            gameOver = true;
-            gameOverText.text = "Game Over Man, Game Over";
+            gameOver.Value = true;
         }
 
         public void Update()
         {
-            if (!restart)
+            if (!restart.Value)
             {
                 return;
             }
@@ -68,11 +58,6 @@ namespace GameCode
             {
                 SceneManager.LoadScene("Main");
             }
-        }
-
-        private void UpdateCash()
-        {
-            cashText.text = "$" + Cash;
         }
 
         public void EndLevel()

@@ -102,7 +102,7 @@ namespace GameCode
             }
 
             var next = current.weaponListData.weaponLevels[current.level + 1];
-            if (next == null || next.cost > game.Cash)
+            if (next == null || next.cost > game.cash.Value)
             {
                 return;
             }
@@ -124,7 +124,7 @@ namespace GameCode
             var newWeapon = selectedWeapon.weaponLevels[0];
 
             // can't afford it even after selling your current weapon
-            if (currentValue + game.Cash < newWeapon.cost)
+            if (currentValue + game.cash.Value < newWeapon.cost)
             {
                 return;
             }
